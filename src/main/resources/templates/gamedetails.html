@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body data-th-object="${game}">
+    <h1>Game Details: <span data-th-text="*{name}"></span></h1>
+    <p><img data-th-src="*{image}" alt="" width="300" height="200"></p>
+    <p>Published:<span data-th-text="*{year}"></span></p>
+
+    <p>
+        <form data-th-object="${newComment}" method="POST" action="/post">
+            <input type="hidden" name="gid" data-th-value="${game.gid}">
+            <p>User:<input type="text" placeholder="your username.. " data-th-field="*{user}"> </p>
+            <p>Rating:<input type="text" placeholder="your rating.. " data-th-field="*{rating}"> </p>
+            <p>Comment:<textarea placeholder="your comment.. " data-th-field="*{cText}"> </textarea>
+                <p></p><button type="submit">post</button>
+        </form>
+    </p>
+
+    <div data-th-unless="${#lists.isEmpty(commentList)}">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Rating</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-th-each="comment : ${commentList}">
+              <td><span data-th-text="${comment.user}"></span></td>
+              <td><span data-th-text="${comment.rating}"></span></td>
+              <td><span data-th-text="${comment.cText}"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    <!-- <div data-th-unless="${#lists.isEmpty(commentList)}">
+        <table>
+          <tbody>
+            <tr data-th-each="comment : ${commentList}">
+            <td>User: <span data-th-text="${comment.user}"></span></td>
+              <td>Rating: <span data-th-text="${comment.rating}"></span></td>
+              <td>Comment: <span data-th-text="${comment.cText}"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div> -->
+
+    <div data-th-if="${#lists.isEmpty(commentList)}">
+        <h2>No Comments</h2>
+    </div>
+
+    
+
+</body>
+</html>

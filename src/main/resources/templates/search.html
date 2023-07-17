@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Search result for <span data-th-text="${gameName}"></span></h1>
+    <div data-th-unless="${#lists.isEmpty(gameList)}">
+        <li data-th-each="g:${gameList}" data-th-object="${g}">
+            
+            <a data-th-href="@{/game/{gid}(gid=${g.gid})}" data-th-text="*{name}"></a>
+           
+        </li>
+    </div>
+
+    <div data-th-if="${#lists.isEmpty(gameList)}">
+        <h2>No games found</h2>
+    </div>
+    
+</body>
+</html>

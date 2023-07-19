@@ -72,17 +72,23 @@ public class GameRepository {
     }
 
 //     printjson(
-// db.game.aggregate([
-// { $match:{gid:1}},
-// {$lookup:{
-//     from:'comment',
-//     foreignField:'gid',
-//     localField:"gid",
-//     as:'comment_details'
-// }},
-// {$project:{game_id:"$gid",_id:0,name:1,year:1,rank:1,users_rated:1,url:1,thumbnail:'$image',reviews:'$comment_details.c_id',timestamp:'$$NOW',average: { $avg: "$users_rated" }}}
-// ])
-// )
+//  db.game.aggregate([
+//  { $match:{gid:1}},
+//  {$lookup:{
+//      from:'comment',
+//      foreignField:'gid',
+//      localField:"gid",
+//      as:'comment_details'
+//  }},
+//  {$project:{game_id:"$gid",_id:0,name:1,year:1,rank:1,users_rated:1,url:1,thumbnail:'$image',reviews:'$comment_details.c_id',timestamp:'$$NOW',average: { $avg: "$comment_details.rating" },reviews: {
+//           $map: {
+//             input: "$comment_details",
+//             as: "comment",
+//             in: { $concat: ["review/", { $toString: "$$comment.c_id" }] }
+//           }
+//         }}}
+//  ])
+//  );
 
 // public Optional<Game> aggregateGameReview(Integer gid){
 //     MatchOperation matchgameId = Aggregation.match(

@@ -6,16 +6,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sg.edu.nus.iss.practiceworkshop7.exception.ResourceNotFoundException;
 import sg.edu.nus.iss.practiceworkshop7.model.Comment;
 import sg.edu.nus.iss.practiceworkshop7.model.Game;
+import sg.edu.nus.iss.practiceworkshop7.model.Review;
 import sg.edu.nus.iss.practiceworkshop7.repository.CommentRepository;
 import sg.edu.nus.iss.practiceworkshop7.repository.GameRepository;
 import sg.edu.nus.iss.practiceworkshop7.utilities.CommentUtility;
 import sg.edu.nus.iss.practiceworkshop7.utilities.GameUtility;
+import sg.edu.nus.iss.practiceworkshop7.utilities.ReviewUtility;
 
 @Service
 public class GameService {
@@ -88,7 +91,29 @@ public class GameService {
 
     public void insertComment(Comment comment){
         comment.setCId(UUID.randomUUID().toString().substring(0,9));
-        cRepo.insertComment(comment);
+        ObjectId objId=cRepo.insertComment(comment);
+    }
+
+    public Optional<Review> getAGameByGid(Integer gid){
+        	List<Document> result=gRepo.getGameDetailsWithGid(gid);
+            List<Review> gameList= new ArrayList<>();
+            
+			for(Document doc:result){
+			Review r=ReviewUtility.toReview(doc);
+            gameList.add(r);
+			
+			}
+
+           Review optReview= gameList.get(0);
+
+           if(gameList.isEmpty()){
+            return Optional.empty();
+           }
+           return Optional.of(optReview);
+    }
+
+    public List<Document> minmax(String user,String rating){
+        return gRepo.aggegratesMinMaxGameReviews(user, rating);
     }
     
 }

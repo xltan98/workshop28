@@ -6,6 +6,11 @@ import java.util.List;
 
 import org.bson.Document;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import sg.edu.nus.iss.practiceworkshop7.model.MinMaxReview;
 import sg.edu.nus.iss.practiceworkshop7.model.Review;
 
 public class ReviewUtility {
@@ -26,6 +31,21 @@ public class ReviewUtility {
         return r;
 
 
+
+    }
+
+    public static JsonObject toJSON(MinMaxReview rr){
+        JsonArrayBuilder builder= Json.createArrayBuilder();
+        for (Document doc:rr.getReviewList()){
+            builder.add(doc.toJson());
+        }
+        JsonArray result=builder.build();
+
+        return Json.createObjectBuilder()
+        .add("rating",rr.getRating())
+        .add("games",result)
+        .add("timestamp",rr.getTimestamp())
+        .build();
 
     }
     

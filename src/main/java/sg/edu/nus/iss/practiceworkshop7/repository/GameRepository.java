@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.attoparser.dom.Comment;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -134,7 +135,78 @@ public class GameRepository {
 
         return result.getMappedResults();
     }
+
+//     printjson(
+//   db.comment.aggregate([
+//     {
+//       $match: {
+//         $and: [
+//           { user: "PAYDIRT" },
+//           { rating: { "$gt": 5 } }
+//         ]
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: "game",
+//         localField: "gid",
+//         foreignField: "gid",
+//         as: "gameReviews"
+//       }
+//     },
+//     {
+//       $project: {
+//         _id: 0,
+//         c_id: 1,
+//         user: 1,
+//         rating: 1,
+//         c_text: 1,
+//         gid: 1,
+//         game_name: { $arrayElemAt: ["$gameReviews.name", 0] }
+//       }
+//     }
+//   ])
+// );
+
+public List<Document> aggegratesMinMaxGameReviews(String username,String rating){
+    Criteria c= null;
+    if(rating.toLowerCase().equals("highest")){
+        c= new Criteria().andOperator(
+            Criteria.where("user").is(username),
+            Criteria.where("rating").gte(5));}
+            
+            else{
+            c= new Criteria().andOperator(
+                Criteria.where("user").is(username),
+                Criteria.where("rating").lte(4)
+            );
+
+        }
+
+        MatchOperation mOP= Aggregation.match(c);
+
+        LookupOperation lOp= Aggregation.lookup("game","gid","gid","gameComment");
+
+        ProjectionOperation pOP = Aggregation.project("_id","c_id","user","rating","c_text","gid").and("gameComment.name").as("game_name");
+
+        LimitOperation limitOp = Aggregation.limit(50);
+        
+        // AddFieldsOperationBuilder a = Aggregation.addFields();
+        // a.addFieldWithValue("timestamp", LocalDateTime.now());
+        // a.addFieldWithValue("ratinglh",rating);
+        // AddFieldsOperation newFieldOp = a.build();
+
+        Aggregation pipeline= Aggregation.newAggregation(mOP,lOp,pOP,limitOp);
+
+        AggregationResults<Document> comment =template.aggregate(pipeline,"comment",Document.class);
+
+        return comment.getMappedResults();
+
+
+    }
+
 }
+
 
 
 

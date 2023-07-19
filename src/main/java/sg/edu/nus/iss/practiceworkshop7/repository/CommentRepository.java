@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -53,7 +54,7 @@ public class CommentRepository {
 
     //db.comment.insert({})
 
-    public void insertComment(Comment comment){
+    public ObjectId insertComment(Comment comment){
         Document doc= new Document();
         doc.put(F_CID,comment.getCId());
         doc.put(F_CTEXT,comment.getCText());
@@ -63,7 +64,7 @@ public class CommentRepository {
 
         Document newdoc= template.insert(doc,C_COMMENT);
     
-
+        return newdoc.getObjectId("_id");
 
     }
 }
